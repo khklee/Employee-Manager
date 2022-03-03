@@ -18,6 +18,15 @@ const questions = () => {
         if (options === 'View all department') {
             showDepartment();
         }
+        if (options === 'View all roles') {
+            showRole();
+        }
+        if (options === 'View all employees') {
+            showEmployee();
+        }
+        if (options === 'Finish') {
+            console.log('You finished managing your organization!')
+        }
     })
 };
 
@@ -29,5 +38,25 @@ const showDepartment = () => {
         return questions();
     });
 };
+
+// Show all roles
+const showRole = () => {
+    db.query(role, (err, rows) => {
+        if (err) throw (err);
+        console.table(rows);
+        return questions();
+    });
+};
+
+// Show all employees
+const showEmployee = () => {
+    db.query(employee, (err, rows) => {
+        if (err) throw (err);
+        console.table(rows);
+        return questions();
+    });
+};
+
+
 
 questions();
