@@ -86,6 +86,7 @@ const newDepartment = () => {
         db.query(addDepartment, answer.department, (err, rows) => {
             if (err) throw err;
             console.log(answer.department + ` department created!`);
+            showDepartment();
         });
     })
 
@@ -130,7 +131,7 @@ const newRole = () => {
                 db.query(addRole, params, (err, row) => {
                     if (err) throw err;
                     console.log('New role, ' + input.title + ' created!');
-                    return questions();
+                    showRole();
                 })
             })
         })
@@ -192,7 +193,7 @@ const newEmloyee = () => {
                         db.query(addEmployee, params, (err, row) => {
                             if (err) throw err;
                             console.log('New employee created!');
-                            return questions();
+                            showEmployee();
                         });
                     })
                 })
@@ -217,7 +218,9 @@ const updateEmployeeRole = () => {
             }
         )
         .then(choice => {
-            let params = [ choice.employee ];
+            const employeeName = choice.employee;
+            const params = [];
+            params.push(employeeName);
 
             // Get a role id
             db.query(viewRole, (err, data) => {
@@ -236,13 +239,16 @@ const updateEmployeeRole = () => {
                     const newRole = choice.newRole;
                     params.push(newRole);
 
+                    params [0]= newRole;
+                    params [1] = employeeName;
+
                     console.log(params);
 
                     // Add a new employee's role to the employee table
                     db.query(addNewRole, params, (err, row) => {
                         if (err) throw err;
                         console.log('Updated a new role for the employee!');
-                        console.table(showEmployee);
+                        showEmployee();
                     })
 
                 })
@@ -253,7 +259,5 @@ const updateEmployeeRole = () => {
 
 
 }
-
-
 
 questions();
