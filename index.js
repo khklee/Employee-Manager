@@ -4,7 +4,7 @@ const cTable = require('console.table');
 
 const [ viewDepartment, addDepartment ] = require('./lib/department');
 const [ viewRole, addRole ] = require('./lib/role');
-const [ viewEmployee, addEmployee, getManagerId ] = require('./lib/employee');
+const [ viewEmployee, addEmployee, getManagerId, getName, addNewRole ] = require('./lib/employee');
 
 // Create an array of questions for user input
 const questions = () => {
@@ -34,6 +34,9 @@ const questions = () => {
         }
         if (options === 'Add an employee') {
             newEmloyee();
+        }
+        if (options === 'Update an employee role') {
+            updateEmployeeRole();
         }
         if (options === 'Finish') {
             console.log('You finished managing your organization!');
@@ -79,6 +82,7 @@ const newDepartment = () => {
         }
     )
     .then((answer) => {
+        // Add a new department to the department table
         db.query(addDepartment, answer.department, (err, rows) => {
             if (err) throw err;
             console.log(answer.department + ` department created!`);
@@ -107,11 +111,8 @@ const newRole = () => {
         // get department ids from department table
         db.query(viewDepartment, (err, data) => {
             if (err) throw err;
-            // let deptArray = [];
+
             const dept = data.map(({ name, id }) => ({ name: name, value: id }));
-            console.log(dept);
-            // dept.forEach((dept) => {deptArray.push(dept.name);});
-            // console.log(deptArray);
 
             inquirer.prompt(
                 {
@@ -125,8 +126,8 @@ const newRole = () => {
                 const deptId = choice.id;
                 params.push(deptId);
                 
-                console.log(params);
-                db.query(addRole, params, (err, result) => {
+                // Add a new role to the role table
+                db.query(addRole, params, (err, row) => {
                     if (err) throw err;
                     console.log('New role, ' + input.title + ' created!');
                     return questions();
@@ -142,12 +143,12 @@ const newEmloyee = () => {
         {
             type: 'input',
             name: 'firstName',
-            message: 'What is the first name of the employee?'
+            message: "What is the employee's first name?"
         },
         {
             type: 'input',
             name: 'lastName',
-            message: 'What is the last name of the employee?'
+            message: "What is the employee's last name?"
         }
     ])
     .then(input => {
@@ -162,20 +163,19 @@ const newEmloyee = () => {
                 {
                     type: 'list',
                     name: 'roleId',
-                    message: 'What is the role id?',
+                    message: "What is the employee's role?",
                     choices: roles
                 }
             )
             .then(choice => {
                 const role = choice.roleId;
                 params.push(role);
-                console.log(params);
 
                 // Get a manager id
                 db.query(getManagerId, (err, data) => {
                     if (err) throw err;
                     const ids = data.map(({ first_name, last_name, role_id }) => ({ name: first_name + ' ' + last_name, value: role_id }));
-                    console.log(ids);
+
                     inquirer.prompt(
                         {
                             type: 'list',
@@ -188,7 +188,8 @@ const newEmloyee = () => {
                         const manager = choice.managerName;
                         params.push(manager);
 
-                        db.query(addEmployee, params, (err, rows) => {
+                        // Add a new employee to the employee table
+                        db.query(addEmployee, params, (err, row) => {
                             if (err) throw err;
                             console.log('New employee created!');
                             return questions();
@@ -198,23 +199,61 @@ const newEmloyee = () => {
             })
         })
     })
-
-    // {
-    //     type: 'input',
-    //     name: 'managerId',
-    //     message: 'What is the manager id?',
-    // }
-
-// .then((answer) => {
-//     let employeeInfo = [answer.firstName, answer.lastName, answer.roleId, answer.managerId]
-//     db.query(addEmployee, employeeInfo, (err, rows) => {
-//         if (err) throw (err);
-//         console.log('New employee created!');
-//         return questions();
-//     });
-// })
-
 };
+
+// Update an employee role
+const updateEmployeeRole = () => {
+    // Get employees
+    db.query(getName, (err, data) => {
+        if (err) throw err;
+        const employees = data.map(({ first_name, last_name, id }) => ({ name: first_name + ' ' + last_name, value: id }));
+
+        inquirer.prompt(
+            {
+                type: 'list',
+                name: 'employee',
+                message: "Who would you like to update?",
+                choices: employees
+            }
+        )
+        .then(choice => {
+            let params = [ choice.employee ];
+
+            // Get a role id
+            db.query(viewRole, (err, data) => {
+                if (err) throw err;
+                const roles = data.map(({ title, id }) => ({ name: title, value: id }));
+    
+                inquirer.prompt(
+                    {
+                        type: 'list',
+                        name: 'newRole',
+                        message: "What is the employee's new role?",
+                        choices: roles
+                    }
+                )
+                .then(choice => {
+                    const newRole = choice.newRole;
+                    params.push(newRole);
+
+                    console.log(params);
+
+                    // Add a new employee's role to the employee table
+                    db.query(addNewRole, params, (err, row) => {
+                        if (err) throw err;
+                        console.log('Updated a new role for the employee!');
+                        console.table(showEmployee);
+                    })
+
+                })
+            })
+        })
+    });
+    
+
+
+}
+
 
 
 questions();
