@@ -17,22 +17,21 @@ VALUES
     ('Lawyer', 160000, 4);
     
 
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
+INSERT INTO employee (first_name, last_name, role_id, manager_id, department_id)
 VALUES 
-    ('Ronald', 'Firbank', 1, NULL),
-    ('Virginia', 'Woolf', 2, 1),
-    ('Piers', 'Gaveston', 2, 1),
-    ('Charles', 'LeRoi', 2, 1),
-    ('Katherine', 'Mansfield', 3, NULL),
-    ('Dora', 'Carrington', 4, 5),
-    ('Edward', 'Bellamy', 4, 5),
-    ('Montague', 'Summers', 4, 5),
-    ('Octavia', 'Butler', 5, NULL),
-    ('Unica', 'Zurn', 6, 9),
-    ('James', 'Fraser', 6, 9),
-    ('Jack', 'London', 6, 9),
-    ('Robert', 'Bruce', 7, NULL),
-    ('Peter', 'Greenaway', 8, 13),
-    ('Derek', 'Jarman', 8, 13),
-    ('Paolo', 'Pasolini', 8, 13),
-    ('Heathcote', 'Williams', 8, 13);
+    ('Ronald', 'Firbank', 1, NULL, 1),
+    ('Virginia', 'Woolf', 2, 1, 1),
+    ('Piers', 'Gaveston', 2, 1, 1),
+    ('Charles', 'LeRoi', 2, 1, 1),
+    ('Katherine', 'Mansfield', 3, NULL, 2),
+    ('Dora', 'Carrington', 4, 5, 2),
+    ('Edward', 'Bellamy', 4, 5, 2),
+    ('Montague', 'Summers', 4, 5, 2),
+    ('Octavia', 'Butler', 5, NULL, 3),
+    ('Unica', 'Zurn', 6, 9, 3),
+    ('James', 'Fraser', 6, 9, 3),
+    ('Jack', 'London', 6, 9, 3),
+    ('Robert', 'Bruce', 7, NULL, 4),
+    ('Peter', 'Greenaway', 8, 13, 4),
+    ('Derek', 'Jarman', 8, 13, 4),
+    ('Paolo', 'Pasolini', 8, 13, 4);
