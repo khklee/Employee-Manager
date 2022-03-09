@@ -228,7 +228,7 @@ const newEmloyee = () => {
                 db.query(getManagerId, (err, data) => {
                     if (err) throw err;
                     const ids = data.map(({ first_name, last_name, id }) => ({ name: first_name + ' ' + last_name, value: id }));
-                    console.log(ids);
+                    
                     inquirer.prompt(
                         {
                             type: 'list',
@@ -240,12 +240,11 @@ const newEmloyee = () => {
                     .then(choice => {
                         const manager = choice.managerName;
                         params.push(manager);
-                        console.log(manager);
+
                         // Add a new employee to the employee table
                         db.query(addEmployee, params, (err, row) => {
                             if (err) throw err;
                             console.log('New employee created!');
-                            console.log(params);
                             showEmployee();
                         });
                     });
@@ -295,8 +294,6 @@ const updateEmployeeRole = () => {
                     params [0] = newRole;
                     params [1] = employeeName;
 
-                    console.log(params);
-
                     // Add a new employee's role to the employee table
                     db.query(addNewRole, params, (err, row) => {
                         if (err) throw err;
@@ -334,7 +331,6 @@ const updateManagers = () => {
             db.query(getManagerId, (err, data) => {
                 if (err) throw err;
                 const ids = data.map(({ first_name, last_name, id }) => ({ name: first_name + ' ' + last_name, value: id }));
-                console.log(ids);
                 inquirer.prompt(
                     {
                         type: 'list',
@@ -350,7 +346,6 @@ const updateManagers = () => {
                     params[0] = manager;
                     params[1] = employeeName;
 
-                    console.log(params);
                     // Add a new manager to the employee table
                     db.query(addNewManager, params, (err, row) => {
                         if (err) throw err;
